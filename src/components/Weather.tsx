@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 interface WeatherData {
   weather: {
@@ -90,12 +91,12 @@ export default function Weather() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200, damping: 10 }}
+          className="relative w-[100px] h-[100px]"
         >
-          <img
-            src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+          <Image
+            src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
             alt={weatherData.weather[0].description}
-            width={100}
-            height={100}
+            fill
             className="filter brightness-125"
           />
         </motion.div>

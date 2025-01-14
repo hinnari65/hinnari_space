@@ -1,10 +1,6 @@
 import { NextResponse } from 'next/server';
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 const systemMessage = `Create diverse and interesting sentences in English, Korean, and Chinese that can be used for study. Each generation should randomly select one topic from various fields including:
 
 - Politics and International Relations (e.g., diplomatic relations, elections, policies)
@@ -29,6 +25,19 @@ Output Format:
 }`;
 
 export async function POST() {
+  const apiKey = process.env.OPENAI_API_KEY;
+  
+  if (!apiKey) {
+    return NextResponse.json(
+      { error: 'OpenAI API key is not configured' },
+      { status: 500 }
+    );
+  }
+
+  const openai = new OpenAI({
+    apiKey: apiKey,
+  });
+
   try {
     const completion = await openai.chat.completions.create({
       messages: [
