@@ -31,7 +31,7 @@ export default function Clock() {
       className="space-y-1 text-center"
     >
       <motion.div
-        className="text-2xl text-gray-400 font-light tracking-wider"
+        className="text-xl md:text-2xl text-gray-400 font-light tracking-wider"
       >
         {currentTime.toLocaleDateString('ko-KR', {
           year: 'numeric',
@@ -40,7 +40,7 @@ export default function Clock() {
         })}
       </motion.div>
       <motion.div
-        className="text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
+        className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
       >
         {currentTime.toLocaleTimeString('ko-KR', {
           hour: '2-digit',
