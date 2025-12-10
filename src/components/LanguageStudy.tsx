@@ -1,21 +1,27 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-interface Translation {
-  english: string;
-  korean: string;
-  chinese: string;
+interface Sentence {
+  text: string;
+  translation: string;
+  pinyin?: string;
+}
+
+interface StudyData {
+  english: Sentence[];
+  chinese: Sentence[];
 }
 
 export default function LanguageStudy() {
-  const [translations, setTranslations] = useState<Translation | null>(null);
+  const [studyData, setStudyData] = useState<StudyData | null>(null);
   const [loading, setLoading] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'english' | 'chinese'>('english');
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  const generateTranslation = async () => {
+  const generateStudyList = async () => {
     setLoading(true);
     try {
       const response = await fetch('/api/generate-translation', {
@@ -26,28 +32,28 @@ export default function LanguageStudy() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate translation');
+        throw new Error('Failed to generate study list');
       }
 
       const data = await response.json();
-      setTranslations(data);
+      setStudyData(data);
     } catch (error) {
-      console.error('Error generating translation:', error);
+      console.error('Error generating study list:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const playAudio = async (text: string, language: string) => {
+  const playAudio = async (text: string, id: string) => {
     try {
-      setPlayingAudio(language);
-      
+      setPlayingAudio(id);
+
       const response = await fetch('/api/generate-speech', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text, language }),
+        body: JSON.stringify({ text }),
       });
 
       if (!response.ok) {
@@ -56,7 +62,7 @@ export default function LanguageStudy() {
 
       const { audio } = await response.json();
       const audioUrl = `data:audio/mp3;base64,${audio}`;
-      
+
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
         await audioRef.current.play();
@@ -69,81 +75,99 @@ export default function LanguageStudy() {
   };
 
   return (
-    <div className="p-4">
+    <div className="h-full flex flex-col p-6">
       <audio ref={audioRef} onEnded={() => setPlayingAudio(null)} className="hidden" />
-      
-      <div className="flex justify-between items-center mb-3">
-        <h2 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
-          Language Study
+
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">
+          Daily Language Study
         </h2>
         <button
-          onClick={generateTranslation}
+          onClick={generateStudyList}
           disabled={loading}
-          className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:opacity-90 transition-opacity font-medium disabled:opacity-50 text-sm"
+          className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-xl hover:opacity-90 transition-opacity font-medium disabled:opacity-50 shadow-lg shadow-blue-500/20"
         >
-          {loading ? 'Generating...' : '오늘의 시사 문장'}
+          {loading ? 'Generating...' : '오늘의 학습 생성'}
         </button>
       </div>
 
-      {translations && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-2"
-        >
-          <div className="p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
-            <div className="flex justify-between items-center mb-1">
-              <p className="text-sm text-gray-400">English</p>
-              <button
-                onClick={() => playAudio(translations.english, 'english')}
-                disabled={playingAudio !== null}
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
-                {playingAudio === 'english' ? (
-                  <WaveformIcon className="w-4 h-4 animate-pulse" />
-                ) : (
-                  <SpeakerIcon className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-            <p className="text-base">{translations.english}</p>
+      {studyData && (
+        <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex gap-4 mb-6">
+            <button
+              onClick={() => setActiveTab('english')}
+              className={`flex-1 py-3 rounded-xl font-medium transition-all ${activeTab === 'english'
+                ? 'bg-blue-500/20 text-blue-400 border border-blue-500/50'
+                : 'bg-gray-800/50 text-gray-400 border border-gray-700 hover:bg-gray-700/50'
+                }`}
+            >
+              English (Intermediate)
+            </button>
+            <button
+              onClick={() => setActiveTab('chinese')}
+              className={`flex-1 py-3 rounded-xl font-medium transition-all ${activeTab === 'chinese'
+                ? 'bg-purple-500/20 text-purple-400 border border-purple-500/50'
+                : 'bg-gray-800/50 text-gray-400 border border-gray-700 hover:bg-gray-700/50'
+                }`}
+            >
+              Chinese (Advanced)
+            </button>
           </div>
-          <div className="p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
-            <div className="flex justify-between items-center mb-1">
-              <p className="text-sm text-gray-400">Korean</p>
-              <button
-                onClick={() => playAudio(translations.korean, 'korean')}
-                disabled={playingAudio !== null}
-                className="text-gray-400 hover:text-blue-400 transition-colors"
+
+          <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-4"
               >
-                {playingAudio === 'korean' ? (
-                  <WaveformIcon className="w-4 h-4 animate-pulse" />
-                ) : (
-                  <SpeakerIcon className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-            <p className="text-base">{translations.korean}</p>
+                {studyData[activeTab].map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-5 bg-gray-800/40 backdrop-blur-sm rounded-xl border border-gray-700/50 hover:border-gray-600 transition-colors"
+                  >
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1 space-y-2">
+                        <p className={`text-gray-100 font-medium leading-relaxed ${activeTab === 'chinese' ? 'font-chinese text-xl' : 'text-lg'}`}>
+                          {item.text}
+                        </p>
+                        {item.pinyin && (
+                          <p className="text-sm text-purple-400 font-mono">
+                            {item.pinyin}
+                          </p>
+                        )}
+                        <p className="text-gray-400">
+                          {item.translation}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => playAudio(item.text, `${activeTab}-${index}`)}
+                        disabled={playingAudio !== null}
+                        aria-label={`Listen to sentence ${index + 1}`}
+                        className="p-3 rounded-full bg-gray-700/50 hover:bg-blue-500/20 hover:text-blue-400 text-gray-400 transition-all flex-shrink-0"
+                      >
+                        {playingAudio === `${activeTab}-${index}` ? (
+                          <WaveformIcon className="w-5 h-5 animate-pulse" />
+                        ) : (
+                          <SpeakerIcon className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
-          <div className="p-3 bg-gray-800/50 backdrop-blur-sm rounded-lg border border-gray-700">
-            <div className="flex justify-between items-center mb-1">
-              <p className="text-sm text-gray-400">Chinese</p>
-              <button
-                onClick={() => playAudio(translations.chinese, 'chinese')}
-                disabled={playingAudio !== null}
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
-                {playingAudio === 'chinese' ? (
-                  <WaveformIcon className="w-4 h-4 animate-pulse" />
-                ) : (
-                  <SpeakerIcon className="w-4 h-4" />
-                )}
-              </button>
-            </div>
-            <p className="text-base">{translations.chinese}</p>
-          </div>
-        </motion.div>
+        </div>
+      )}
+
+      {!studyData && !loading && (
+        <div className="flex-1 flex items-center justify-center text-gray-500">
+          <p>버튼을 눌러 오늘의 학습을 시작하세요</p>
+        </div>
       )}
     </div>
   );
@@ -185,4 +209,4 @@ function WaveformIcon({ className = "w-6 h-6" }) {
       />
     </svg>
   );
-} 
+}

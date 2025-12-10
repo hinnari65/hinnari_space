@@ -62,7 +62,7 @@ export default function TodoList() {
 
   const saveEdit = (id: number) => {
     if (!editText.trim()) return;
-    
+
     setTodos(
       todos.map((todo) =>
         todo.id === id ? { ...todo, text: editText.trim() } : todo
@@ -90,22 +90,22 @@ export default function TodoList() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="max-w-md mx-auto p-8"
+      className="h-full flex flex-col p-6"
     >
       <motion.h2
         initial={{ y: -20 }}
         animate={{ y: 0 }}
-        className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400"
+        className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400 flex-shrink-0"
       >
         할 일 목록
       </motion.h2>
-      
+
       <motion.form
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.1 }}
         onSubmit={addTodo}
-        className="mb-6 flex gap-2"
+        className="mb-6 flex gap-2 flex-shrink-0"
       >
         <input
           type="text"
@@ -122,99 +122,103 @@ export default function TodoList() {
         </button>
       </motion.form>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 flex-shrink-0">
         <button
           onClick={() => setFilter('all')}
-          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
-            filter === 'all'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
-          }`}
+          aria-label="Show all tasks"
+          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${filter === 'all'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+            }`}
         >
           전체 ({todos.length})
         </button>
         <button
           onClick={() => setFilter('active')}
-          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
-            filter === 'active'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
-          }`}
+          aria-label="Show active tasks"
+          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${filter === 'active'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+            }`}
         >
           미완료 ({activeTodosCount})
         </button>
         <button
           onClick={() => setFilter('completed')}
-          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${
-            filter === 'completed'
-              ? 'bg-blue-500 text-white'
-              : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
-          }`}
+          aria-label="Show completed tasks"
+          className={`flex-1 px-4 py-2 rounded-lg transition-colors ${filter === 'completed'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+            }`}
         >
           완료 ({completedTodosCount})
         </button>
       </div>
 
-      <motion.ul
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="space-y-3"
-      >
-        <AnimatePresence mode='popLayout'>
-          {filteredTodos.map((todo) => (
-            <motion.li
-              key={todo.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="flex items-center gap-3 p-4 bg-gray-800/50 border border-gray-700 rounded-xl group"
-            >
-              <input
-                type="checkbox"
-                checked={todo.completed}
-                onChange={() => toggleTodo(todo.id)}
-                className="w-5 h-5 rounded-lg border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-700"
-              />
-              
-              {editingId === todo.id ? (
-                <input
-                  type="text"
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  onBlur={() => saveEdit(todo.id)}
-                  onKeyPress={(e) => e.key === 'Enter' && saveEdit(todo.id)}
-                  className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200"
-                  autoFocus
-                />
-              ) : (
-                <span
-                  className={`flex-1 ${
-                    todo.completed ? 'line-through text-gray-500' : 'text-gray-200'
-                  }`}
-                  onDoubleClick={() => startEditing(todo)}
-                >
-                  {todo.text}
-                </span>
-              )}
-
-              <button
-                onClick={() => deleteTodo(todo.id)}
-                className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 text-red-400 hover:text-red-300"
+      <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar min-h-0">
+        <motion.ul
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-3"
+        >
+          <AnimatePresence mode='popLayout'>
+            {filteredTodos.map((todo) => (
+              <motion.li
+                key={todo.id}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                className="flex items-center gap-3 p-4 bg-gray-800/50 border border-gray-700 rounded-xl group"
               >
-                삭제
-              </button>
-            </motion.li>
-          ))}
-        </AnimatePresence>
-      </motion.ul>
+                <input
+                  type="checkbox"
+                  checked={todo.completed}
+                  onChange={() => toggleTodo(todo.id)}
+                  className="w-5 h-5 rounded-lg border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-700 flex-shrink-0"
+                  aria-label={`Mark "${todo.text}" as ${todo.completed ? 'incomplete' : 'complete'}`}
+                />
+
+                {editingId === todo.id ? (
+                  <input
+                    type="text"
+                    value={editText}
+                    onChange={(e) => setEditText(e.target.value)}
+                    onBlur={() => saveEdit(todo.id)}
+                    onKeyPress={(e) => e.key === 'Enter' && saveEdit(todo.id)}
+                    className="flex-1 bg-gray-800/50 border border-gray-700 rounded-lg px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-200"
+                    autoFocus
+                    aria-label="Edit task"
+                  />
+                ) : (
+                  <span
+                    className={`flex-1 ${todo.completed ? 'line-through text-gray-500' : 'text-gray-200'
+                      }`}
+                    onDoubleClick={() => startEditing(todo)}
+                  >
+                    {todo.text}
+                  </span>
+                )}
+
+                <button
+                  onClick={() => deleteTodo(todo.id)}
+                  aria-label={`Delete task "${todo.text}"`}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 text-red-400 hover:text-red-300 flex-shrink-0"
+                >
+                  삭제
+                </button>
+              </motion.li>
+            ))}
+          </AnimatePresence>
+        </motion.ul>
+      </div>
 
       {todos.length > 0 && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="mt-6 flex gap-2"
+          className="mt-6 flex gap-2 flex-shrink-0"
         >
           <button
             onClick={clearAll}
@@ -234,4 +238,4 @@ export default function TodoList() {
       )}
     </motion.div>
   );
-} 
+}

@@ -11,7 +11,7 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.3
+      staggerChildren: 0.1
     }
   }
 };
@@ -28,64 +28,58 @@ const itemVariants = {
   }
 };
 
-const titleVariants = {
-  hidden: { y: -50, opacity: 0 },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 200,
-      damping: 20
-    }
-  }
-};
-
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-12">
-      <motion.h1
-        variants={titleVariants}
-        initial="hidden"
-        animate="visible"
-        className="text-4xl md:text-5xl font-bold text-center mb-12 tracking-tight"
+    <main className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-6 overflow-hidden flex flex-col">
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className="mb-6 flex-shrink-0"
       >
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg">
-          HINNARI&apos;S TODOLIST
-        </span>
-      </motion.h1>
-      
+        <h1 className="text-3xl font-bold text-center tracking-tight">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 drop-shadow-lg">
+            HINNARI SPACE
+          </span>
+        </h1>
+      </motion.header>
+
       <motion.div
-        className="container mx-auto px-4"
+        className="flex-1 grid grid-cols-12 gap-6 min-h-0"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        {/* Left Column: Utilities & Todo */}
+        <div className="col-span-4 flex flex-col gap-6 min-h-0">
+          <div className="grid grid-cols-2 gap-6 flex-shrink-0">
+            <motion.div
+              variants={itemVariants}
+              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-gray-700 h-40 flex items-center justify-center"
+            >
+              <Clock />
+            </motion.div>
+            <motion.div
+              variants={itemVariants}
+              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 h-40 overflow-hidden"
+            >
+              <Weather />
+            </motion.div>
+          </div>
+
           <motion.div
             variants={itemVariants}
-            className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-gray-700"
+            className="flex-1 bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 overflow-hidden min-h-0"
           >
-            <Clock />
-          </motion.div>
-          <motion.div
-            variants={itemVariants}
-            className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700"
-          >
-            <Weather />
+            <TodoList />
           </motion.div>
         </div>
+
+        {/* Right Column: Language Study */}
         <motion.div
           variants={itemVariants}
-          className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 mb-8"
+          className="col-span-8 bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 overflow-hidden min-h-0"
         >
           <LanguageStudy />
-        </motion.div>
-        <motion.div
-          variants={itemVariants}
-          className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700"
-        >
-          <TodoList />
         </motion.div>
       </motion.div>
     </main>

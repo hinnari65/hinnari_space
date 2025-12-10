@@ -12,6 +12,9 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        chinese: ["var(--font-noto-serif-sc)"],
+      },
     },
   },
   plugins: [],
