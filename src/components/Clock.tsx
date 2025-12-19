@@ -28,10 +28,10 @@ export default function Clock() {
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="space-y-1 text-center"
+      className="space-y-0.5 text-center"
     >
       <motion.div
-        className="text-xl md:text-2xl text-gray-400 font-light tracking-wider"
+        className="text-base md:text-lg text-gray-400 font-light tracking-wider"
       >
         {currentTime.toLocaleDateString('ko-KR', {
           year: 'numeric',
@@ -40,7 +40,7 @@ export default function Clock() {
         })}
       </motion.div>
       <motion.div
-        className="text-3xl md:text-4xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
+        className="text-xl md:text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
       >
         {currentTime.toLocaleTimeString('ko-KR', {
           hour: '2-digit',

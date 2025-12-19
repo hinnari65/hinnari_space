@@ -83,11 +83,11 @@ export default function Weather() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="p-5 h-full flex flex-col justify-center"
+      className="p-3 h-full flex flex-col justify-center"
     >
-      <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 md:gap-3">
-          <div className="relative w-12 h-12 md:w-16 md:h-16 flex-shrink-0">
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="relative w-10 h-10 md:w-12 md:h-12 flex-shrink-0">
             <Image
               src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
               alt={weatherData.weather[0].description}
@@ -96,23 +96,23 @@ export default function Weather() {
             />
           </div>
           <div>
-            <p className="text-2xl md:text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
+            <p className="text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
               {Math.round(weatherData.main.temp)}°
             </p>
-            <p className="text-[10px] md:text-xs text-gray-400 truncate max-w-[60px] md:max-w-none">
+            <p className="text-[10px] md:text-xs text-gray-400 truncate max-w-[50px] md:max-w-none">
               {weatherData.name}
             </p>
           </div>
         </div>
 
-        <div className="text-right space-y-1 flex-shrink-0">
-          <div className="bg-gray-800/50 px-2 py-1 md:px-3 md:py-1.5 rounded-lg backdrop-blur-sm">
-            <p className="text-[10px] md:text-xs text-gray-400">습도</p>
-            <p className="text-xs md:text-sm font-medium">{weatherData.main.humidity}%</p>
+        <div className="text-right space-y-0.5 flex-shrink-0">
+          <div className="bg-gray-800/50 px-2 py-0.5 rounded-lg backdrop-blur-sm">
+            <p className="text-[9px] md:text-[10px] text-gray-400">습도</p>
+            <p className="text-[10px] md:text-xs font-medium">{weatherData.main.humidity}%</p>
           </div>
-          <div className="bg-gray-800/50 px-2 py-1 md:px-3 md:py-1.5 rounded-lg backdrop-blur-sm">
-            <p className="text-[10px] md:text-xs text-gray-400">풍속</p>
-            <p className="text-xs md:text-sm font-medium">{weatherData.wind.speed}m/s</p>
+          <div className="bg-gray-800/50 px-2 py-0.5 rounded-lg backdrop-blur-sm">
+            <p className="text-[9px] md:text-[10px] text-gray-400">풍속</p>
+            <p className="text-[10px] md:text-xs font-medium">{weatherData.wind.speed}m/s</p>
           </div>
         </div>
       </div>

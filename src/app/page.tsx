@@ -7,6 +7,7 @@ const Clock = dynamic(() => import('@/components/Clock'), { ssr: false });
 const Weather = dynamic(() => import('@/components/Weather'), { ssr: false });
 const TodoList = dynamic(() => import('@/components/TodoList'), { ssr: false });
 const LanguageStudy = dynamic(() => import('@/components/LanguageStudy'), { ssr: false });
+const FinancialTicker = dynamic(() => import('@/components/FinancialTicker'), { ssr: false });
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -52,17 +53,21 @@ export default function Home() {
         animate="visible"
       >
         {/* Left Column: Utilities & Todo */}
-        <div className="col-span-1 md:col-span-4 flex flex-col gap-4 md:gap-6 min-h-0">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 flex-shrink-0">
+        <div className="col-span-1 md:col-span-4 flex flex-col gap-3 md:gap-4 min-h-0">
+          <div className="flex flex-col gap-2">
+            <FinancialTicker />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 flex-shrink-0">
             <motion.div
               variants={itemVariants}
-              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-gray-700 h-28 md:h-40 flex items-center justify-center"
+              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg overflow-hidden border border-gray-700 h-20 md:h-24 flex items-center justify-center"
             >
               <Clock />
             </motion.div>
             <motion.div
               variants={itemVariants}
-              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 h-28 md:h-40 overflow-hidden"
+              className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 h-20 md:h-24 overflow-hidden"
             >
               <Weather />
             </motion.div>
@@ -70,7 +75,7 @@ export default function Home() {
 
           <motion.div
             variants={itemVariants}
-            className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 overflow-hidden h-[500px] md:h-auto md:flex-1 md:min-h-0"
+            className="bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-lg border border-gray-700 overflow-hidden flex-1 min-h-[300px]"
           >
             <TodoList />
           </motion.div>
